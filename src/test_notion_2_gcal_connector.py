@@ -15,7 +15,7 @@ def test_notion_page_2_gcal_event_completed():
             },
             'Status': {
                 'select': {
-                    'name': 'Completed'
+                    'name': 'Backlog'
                 }
             },
             'Due Date': {

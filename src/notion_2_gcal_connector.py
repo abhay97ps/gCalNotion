@@ -19,6 +19,7 @@ from notion_api_utils import get_tasks_database
 
 load_dotenv()
 
+IGNORED_STATUS = frozenset(['Completed', 'Backlog'])
 
 def notion_page_2_gcal_event(page):
     '''Parse page info into Google Calendar event format.
@@ -37,7 +38,7 @@ def notion_page_2_gcal_event(page):
         date = page['properties']['Due Date']['date']
 
         # Ignore page if status is 'completed'
-        if status == 'Completed':
+        if status in IGNORED_STATUS:
             return None
 
         # Check if date exists else set start end to today (all day event)
