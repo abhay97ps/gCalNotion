@@ -38,14 +38,14 @@ def today_all_day_event(name, timezone='America/New_York', start=None):
         if start is not None:
             # Parse start date to datetime
             start_date = datetime.datetime.strptime(start, '%Y-%m-%d')
-            # Set event start time to start_date at 9AM in the specified timezone
+            # Set event start time to start_date at t timestep in the specified timezone
             event_start = pytz.timezone(timezone).localize(
-                datetime.datetime.combine(start_date, datetime.time(15, 0)))
+                datetime.datetime.combine(start_date, datetime.time(16, 0)))
         else:
             # Set event start time to today at 9AM in the specified timezone
             event_start = datetime.datetime.now(pytz.timezone(timezone)).replace(
-                hour=15, minute=0, second=0, microsecond=0)
-            
+                hour=16, minute=0, second=0, microsecond=0)
+
         # Construct event dictionary
         event = {
             'summary': name,
@@ -85,6 +85,9 @@ def construct_timed_event(name, start, end, timezone='America/New_York'):
     '''
     try:
         event_start = datetime.datetime.fromisoformat(start)
+        # if start date is expired set to today
+        if datetime.datetime.now().date() > event_start.date():
+            event_start = datetime.datetime.now()
         event_end = datetime.datetime.fromisoformat(end)
         # Construct event dictionary
         return {
