@@ -30,24 +30,30 @@ def notion_page_2_gcal_event(page):
         dict: A dictionary representing a Google Calendar event.
     '''
 
-    # Extract relevant properties from page dictionary
-    name = page['properties']['Name']['title'][0]['text']['content']
-    status = page['properties']['Status']['select']['name']
-    date = page['properties']['Due Date']['date']
+    try:
+        # Extract relevant properties from page dictionary
+        name = page['properties']['Name']['title'][0]['text']['content']
+        status = page['properties']['Status']['select']['name']
+        date = page['properties']['Due Date']['date']
 
-    # Ignore page if status is 'completed'
-    if status == 'Completed':
+        # Ignore page if status is 'completed'
+        if status == 'Completed':
+            return None
+
+        # Check if date exists else set start end to today (all day event)
+        if len(date) != 0:
+
+            start = date['start']
+            end = date.get('end', None)
+            return construct_gcal_event(name, start, end)
+        else:
+            return today_all_day_event(name)
+    except KeyError as e:
+        print(f"KeyError: {e}")
         return None
-
-    # Check if date exists else set start end to today (all day event)
-    if len(date) != 0:
-
-        start = date['start']
-        end = date.get('end', None)
-
-        return construct_gcal_event(name, end, start)
-    else:
-        return construct_gcal_event(name, None, None)
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
 
 
 def construct_gcal_event(name, start, end=None):
@@ -122,6 +128,7 @@ def construct_all_day_event(name, start):
         dict: A dictionary containing the event details.
     '''
     try:
+        print(f"start from construct: {start}")
         if datetime.datetime.now().date() > datetime.datetime.fromisoformat(start).date():
             return today_all_day_event(name)
         else:
