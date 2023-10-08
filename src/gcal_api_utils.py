@@ -73,7 +73,7 @@ def get_gcal_events(creds=get_credentials()):
         return []
 
 
-def create_gcal_event(event, creds=get_credentials()):
+def create_gcal_event(event_body, creds=get_credentials()):
     """Creates an event on the user's Google Calendar.
 
     Args:
@@ -85,9 +85,9 @@ def create_gcal_event(event, creds=get_credentials()):
     """
     try:
         service = build('calendar', 'v3', credentials=creds)
-
+        print(f'Creating event...:{event_body}')
         # Call the Calendar API
-        event = service.events().insert(calendarId='primary', body=event).execute()
+        event = service.events().insert(calendarId='primary', body=event_body).execute()
         print('Event created: %s' % (event.get('htmlLink')))
         return event
 
